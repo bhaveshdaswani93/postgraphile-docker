@@ -1,7 +1,17 @@
 const express = require("express");
 const { postgraphile } = require("postgraphile");
+const PgSimplifyInflectorPlugin = require("@graphile-contrib/pg-simplify-inflector");
+const { makeWrapResolversPlugin } = require('graphile-utils')
 
 const app = express();
+const somePlugin = makeWrapResolversPlugin({
+  User: {
+    async email(resolve, source, args, context, resolveInfo) {
+      const result = await resolve();
+      return result.toLowerCase();
+    },
+  },
+});
 
 app.use(
   postgraphile(
@@ -11,6 +21,8 @@ app.use(
       watchPg: true,
       graphiql: true,
       // enhanceGraphiql: true,
+      appendPlugins: [PgSimplifyInflectorPlugin, somePlugin],
+      
     }
   )
 );

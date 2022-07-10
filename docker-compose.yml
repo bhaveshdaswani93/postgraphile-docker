@@ -22,6 +22,8 @@ services:
         context: ./graphql
     env_file:
         - ./.env
+    volumes:
+        - ./graphql/src/:/home/node/app
     depends_on:
         - db
     networks:
